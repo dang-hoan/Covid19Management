@@ -1,0 +1,108 @@
+﻿@model Vaccination
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<head>
+    <style>
+        .customButton button {
+            background-color: white !important;
+            border: 1px solid #ced4da !important;
+        }
+
+        /*input[class*="placeholderColor"] {
+                    color: #ced4da
+                }*/
+    </style>
+</head>
+
+<h1>Create new vaccination</h1>
+<hr />
+<form asp-action="Create" onsubmit="return validateNgayTiemMui1();">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3 col-6">
+        <label asp-for="@Model.CitizenCode" class="form-label"></label>
+        <select asp-for="@Model.CitizenCode" class="form-select" asp-items="ViewBag.CitizenCode"></select>
+        <span asp-validation-for="@Model.CitizenCode" class="text-danger"></span>
+    </div>
+    <div class="mb-3 col-6">
+        <label asp-for="@Model.VacxinCode" class="form-label"></label>
+        <select asp-for="@Model.VacxinCode" class="form-select" asp-items="ViewBag.VacxinCode"></select>
+        <span asp-validation-for="@Model.VacxinCode" class="text-danger"></span>
+    </div>
+    <div class="mb-3 col-6">
+        <label asp-for="@Model.FirstInjectDay" class="form-label"></label>
+        <input id="FirstInjectDay" type="text" name="FirstInjectDay" class="form-control placeholderColor" placeholder="DD/MM/YYYY" />
+        <span asp-validation-for="@Model.FirstInjectDay" class="text-danger"></span>
+    </div>
+    <div class="mb-3 col-6">
+        <label asp-for="@Model.SecondInjectRegisterDay" class="form-label"></label>
+        <input asp-for="@Model.SecondInjectRegisterDay" class="form-control placeholderColor" />
+        <span asp-validation-for="@Model.SecondInjectRegisterDay" class="text-danger"></span>
+    </div>
+    <div class="mb-3 col-6">
+        <label asp-for="@Model.SecondInjectDay" class="form-label"></label>
+        <input asp-for="@Model.SecondInjectDay" class="form-control placeholderColor" />
+        <span asp-validation-for="@Model.SecondInjectDay" class="text-danger"></span>
+    </div>
+    <div class="mb-3 col-6">
+        <label asp-for="@Model.Status" class="form-label"></label>
+        <input asp-for="@Model.Status" class="form-control placeholderColor" />
+        <span asp-validation-for="@Model.Status" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="@Model.Note" class="form-label"></label>
+        <textarea asp-for="@Model.Note" class="form-control" placeholder="Note something"></textarea>
+        <span asp-validation-for="@Model.Note" class="text-danger"></span>
+    </div>    
+    <div class="mb-3">
+        <input type="submit" value="Create" class="btn btn-outline-success" />
+        <a class="btn btn-outline-primary" asp-action="Index">Back to List</a>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        function validateNgayTiemMui1() {
+            var ngayTiemMui1 = document.getElementById('FirstInjectDay').value;
+
+            // Use a more strict regular expression for DD/MM/YYYY format
+            var regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+
+            // Check if the input matches the regular expression
+            var match = ngayTiemMui1.match(regex);
+
+            if (!match) {
+                alert("Ngày tiêm mũi 1 không đúng định dạng DD/MM/YYYY");
+                return false;
+            }
+
+            var day = parseInt(match[1], 10);
+            var month = parseInt(match[2], 10);
+            var year = parseInt(match[3], 10);
+
+            // Validate day, month, and year ranges
+            if (day < 1 || day > 31 || month < 1 || month > 12 || year < 1900) {
+                alert("Ngày tiêm mũi 1 không hợp lệ");
+                return false;
+            }
+
+            // Chuyển đổi giá trị ngày tiêm mũi 1 thành đối tượng Date
+            var ngayTiemMui1Date = new Date(year, month - 1, day);
+
+            // Kiểm tra xem ngày tiêm mũi 1 có lớn hơn ngày hiện tại không
+            var ngayHienTai = new Date();
+
+            if (ngayTiemMui1Date > ngayHienTai) {
+                alert("Ngày tiêm mũi 1 đang lớn hơn ngày hiện tại");
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
